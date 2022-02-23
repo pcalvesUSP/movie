@@ -1,0 +1,30 @@
+version: '3.8'
+
+volumes:
+  mongo_vol:
+
+services:
+  mongodb:
+    image: mongo:5.0.6
+    ports: 
+    - 27017:27017
+    networks:
+    - review_microservicos
+    volumes:
+    - mongo_vol:/data/db
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongouser
+      MONGO_INITDB_ROOT_PASSWORD: mongopwd
+
+  movie:
+    image: priscilaalv/movie:v1
+    depends_on:
+    - mongodb
+    ports:
+    - 8181:8181
+    networks:
+      - review_microservicos
+    restart: always
+    environment:
+      MONGODB_URI: mongodb://mongouser:mongopwd@mongodb:27017/admin
